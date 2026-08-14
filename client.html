@@ -1096,7 +1096,7 @@
 </div>
 
 <script>
-const API_URL = 'http://localhost:5000/api'||' https://ismaelbackend.onrender.com';
+const API_URL =' https://ismaelbackend.onrender.com/api';
 let socket = null, currentUser = null, currentClient = null, token = null;
 let clientCollections = [], clientNotifications = [];
 
@@ -1244,7 +1244,7 @@ function initPortal() {
 
 function initSocket() {
     if (socket) return;
-    socket = io('http://localhost:5000'||" https://ismaelbackend.onrender.com", { auth: { token } });
+    socket = io(" https://ismaelbackend.onrender.com", { auth: { token } });
     socket.on('connect', () => { if (currentClient?._id) socket.emit('join-client', currentClient._id); });
     socket.on('new-notification', () => { loadClientNotifications(); showToast('New update!', 'info'); });
     socket.on('collection-update', () => { loadDashboard(); loadClientCollections(); });
