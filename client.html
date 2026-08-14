@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Client Portal — Ismeil Solution</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        :root {
+            --navy: #0d1f3c;
+            --gold: #f5c518;
+            --gold-dark: #d4a900;
+            --green: #1a4d3a;
+            --green-light: #2d7a58;
+            --text: #1c2533;
+            --text-gray: #6b7280;
+            --border: #e7eaf0;
+            --white: #ffffff;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: #f5f5f5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== BACKGROUND ===== */
+        .bg-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('./images/hero.png') center/cover no-repeat;
+            filter: brightness(0.25) blur(3px);
+            z-index: 0;
+        }
+
+        /* ===== LOGIN PAGE ===== */
+        .login-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: rgba(255,255,255,0.97);
+            padding: 48px 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 440px;
+            max-width: 95%;
+            text-align: center;
+        }
+
+        .login-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .login-logo img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+            background: #fff;
+        }
+
+        .login-logo span {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--navy);
+            letter-spacing: 1px;
+        }
+
+        .login-box h2 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--green);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .login-box .subtitle {
+            color: var(--text-gray);
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .login-info {
+            background: #e8f5e9;
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: var(--green);
+            border-left: 3px solid var(--green-light);
+            text-align: left;
+        }
+
+        .login-info strong { display: block; margin-bottom: 4px; }
+        .login-info svg { vertical-align: middle; margin-right: 6px; }
+
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: var(--text); }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s;
+            background: #fafafa;
+            letter-spacing: 1px;
+        }
+        .form-group input:focus { outline: none; border-color: var(--gold); background: #fff; }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: var(--green);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+        }
+        .btn-login:hover { background: var(--green-light); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(26,77,58,0.3); }
+
+        .login-error {
+            background: #fff0f0;
+            color: #c0392b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            display: none;
+            text-align: center;
+        }
+
+        .login-footer { margin-top: 24px; font-size: 12px; color: var(--text-gray); }
+
+        /* ===== SVG Icons ===== */
+        .icon-svg { width: 18px; height: 18px; display: inline-block; vertical-align: middle; flex-shrink: 0; }
+        .icon-svg-sm { width: 14px; height: 14px; }
+        .icon-svg-lg { width: 24px; height: 24px; }
+
+        /* ===== PORTAL ===== */
+        .portal { display: none; position: relative; z-index: 1; }
+
+        .portal-nav {
+            background: var(--navy);
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            gap: 8px;
+        }
+
+        .portal-nav .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .portal-nav .brand img {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+        }
+
+        .portal-nav .brand span {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        /* Desktop menu */
+        .portal-nav-menu {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .portal-nav-menu li {
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 6px 0;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .portal-nav-menu li:hover,
+        .portal-nav-menu li.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+        }
+
+        .portal-nav-menu li svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+        }
+
+        .portal-nav-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .btn-logout {
+            background: #c0392b;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.2s;
+        }
+        .btn-logout:hover { background: #e74c3c; }
+
+        /* ===== BURGER MENU ===== */
+        .burger-btn {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 26px;
+            height: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            z-index: 60;
+            flex-shrink: 0;
+        }
+
+        .burger-btn span {
+            display: block;
+            width: 100%;
+            height: 2.5px;
+            background: #fff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .burger-btn.active span:nth-child(1) {
+            transform: translateY(8.5px) rotate(45deg);
+        }
+
+        .burger-btn.active span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+
+        .burger-btn.active span:nth-child(3) {
+            transform: translateY(-8.5px) rotate(-45deg);
+        }
+
+        /* Mobile menu overlay */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 64px;
+            right: -100%;
+            width: 280px;
+            max-width: 80%;
+            height: calc(100vh - 64px);
+            background: var(--navy);
+            z-index: 45;
+            padding: 24px 20px;
+            transition: right 0.35s ease;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.3);
+            overflow-y: auto;
+        }
+
+        .mobile-menu-overlay.open {
+            right: 0;
+        }
+
+        .mobile-menu-overlay .mobile-nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .mobile-menu-overlay .mobile-nav-menu li {
+            color: rgba(255,255,255,0.8);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 14px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mobile-menu-overlay .mobile-nav-menu li:hover,
+        .mobile-menu-overlay .mobile-nav-menu li.active {
+            background: rgba(245, 197, 24, 0.15);
+            color: var(--gold);
+        }
+
+        .mobile-menu-overlay .mobile-nav-menu li svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            flex-shrink: 0;
+        }
+
+        .mobile-menu-overlay .mobile-user-section {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 16px;
+            padding-top: 16px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+        }
+
+        .mobile-menu-overlay .mobile-user-section .name {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .mobile-menu-overlay .mobile-logout-btn {
+            margin-top: 12px;
+            width: 100%;
+            padding: 12px;
+            background: #c0392b;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.2s;
+        }
+
+        .mobile-menu-overlay .mobile-logout-btn:hover { background: #e74c3c; }
+
+        /* Mobile backdrop */
+        .mobile-backdrop {
+            display: none;
+            position: fixed;
+            top: 64px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 40;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .mobile-backdrop.open {
+            opacity: 1;
+        }
+
+        .portal-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        /* Welcome Card */
+        .welcome-card {
+            background: #fff;
+            padding: 24px 28px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 24px;
+        }
+
+        .welcome-card h1 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--green);
+        }
+
+        .welcome-card .client-id-tag {
+            display: inline-block;
+            background: #e8f5e9;
+            color: var(--green);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .welcome-card .client-id-tag svg { vertical-align: middle; margin-right: 4px; }
+
+        /* Stats */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #fff;
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .stat-card .num {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--green);
+        }
+
+        .stat-card .lbl { font-size: 12px; color: var(--text-gray); margin-top: 2px; font-weight: 500; }
+
+        /* Section */
+        .section { display: none; }
+        .section.active { display: block; }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .section-header h2 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--green);
+            text-transform: uppercase;
+        }
+
+        /* Table */
+        .table-card {
+            background: #fff;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        table th {
+            background: #f8f9fa;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 11px;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        table tr:hover { background: #fafbfc; }
+
+        .status-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-at_station { background: #ede7f6; color: #5e35b1; }
+        .status-in_transit { background: #e3f2fd; color: #1565c0; }
+        .status-at_destination_station { background: #e8f5e9; color: #2e7d32; }
+        .status-out_for_delivery { background: #fff3e0; color: #e65100; }
+        .status-delivered { background: #e8f5e9; color: #2e7d32; }
+        .status-delayed { background: #ffebee; color: #c62828; }
+        .status-cancelled { background: #f5f5f5; color: #616161; }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar input,
+        .filter-bar select {
+            padding: 8px 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        /* Notification */
+        .notif-card {
+            background: #fff;
+            padding: 14px 18px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            margin-bottom: 10px;
+            border-left: 4px solid var(--green-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .notif-card.read { opacity: 0.55; border-left-color: #ddd; }
+        .notif-card .title { font-weight: 600; margin-bottom: 2px; }
+        .notif-card .msg { font-size: 13px; color: var(--text-gray); }
+        .notif-card .time { font-size: 11px; color: #aaa; margin-top: 4px; }
+
+        .btn-sm {
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.2s;
+        }
+
+        .btn-success { background: var(--green); color: #fff; }
+        .btn-success:hover { background: var(--green-light); }
+        .btn-outline { background: none; border: 2px solid var(--border); color: var(--text); }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-box {
+            background: #fff;
+            padding: 28px 24px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 750px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .modal-header h3 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--green);
+            text-transform: uppercase;
+        }
+
+        .modal-close {
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            background: none;
+            border: none;
+            padding: 0 8px;
+            line-height: 1;
+        }
+
+        .modal-close:hover { color: #333; }
+
+        /* ===== TRUCK ANIMATION ===== */
+        .truck-track {
+            position: relative;
+            height: 100px;
+            background: #e8ecf0;
+            border-radius: 12px;
+            margin: 16px 0 24px;
+            overflow: hidden;
+            border: 1px solid #d0d4d8;
+        }
+
+        .truck-track .road-line {
+            position: absolute;
+            bottom: 18px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: repeating-linear-gradient(90deg, #888 0px, #888 20px, transparent 20px, transparent 30px);
+            opacity: 0.5;
+        }
+
+        .truck {
+            position: absolute;
+            bottom: 18px;
+            left: -80px;
+            animation: truckDrive 8s ease-in-out infinite;
+        }
+
+        .truck-body { display: flex; align-items: flex-end; gap: 0; }
+
+        .truck-cab {
+            width: 36px;
+            height: 28px;
+            background: var(--navy);
+            border-radius: 4px 8px 0 0;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .truck-cab::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 4px;
+            width: 10px;
+            height: 10px;
+            background: #333;
+            border-radius: 50%;
+            box-shadow: 16px 0 0 #333;
+        }
+
+        .truck-cab .window {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 14px;
+            height: 10px;
+            background: #7fc8f0;
+            border-radius: 2px;
+        }
+
+        .truck-cab .window::after {
+            content: '';
+            position: absolute;
+            right: 2px;
+            top: 1px;
+            width: 6px;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 1px;
+        }
+
+        .truck-container {
+            width: 56px;
+            height: 30px;
+            background: var(--gold);
+            border-radius: 0 6px 0 0;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .truck-container::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 8px;
+            width: 10px;
+            height: 10px;
+            background: #333;
+            border-radius: 50%;
+            box-shadow: 28px 0 0 #333;
+        }
+
+        .truck-container .stripe {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            right: 6px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+        }
+
+        .truck-container .stripe:nth-child(2) { top: 14px; height: 3px; }
+
+        .truck-shadow {
+            position: absolute;
+            bottom: 6px;
+            left: 4px;
+            right: 4px;
+            height: 4px;
+            background: rgba(0,0,0,0.08);
+            border-radius: 50%;
+            filter: blur(3px);
+        }
+
+        .truck-status-label {
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--green);
+            background: rgba(255,255,255,0.9);
+            padding: 4px 14px;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        @keyframes truckDrive {
+            0% { left: -80px; }
+            85% { left: calc(100% - 120px); }
+            100% { left: calc(100% - 120px); }
+        }
+
+        .truck-paused .truck { animation-play-state: paused; }
+
+        /* Timeline */
+        .timeline { margin-top: 12px; }
+
+        .timeline-item {
+            display: flex;
+            gap: 14px;
+            padding: 12px 0;
+            border-left: 3px solid #e0e0e0;
+            margin-left: 8px;
+            padding-left: 22px;
+            position: relative;
+        }
+
+        .timeline-item:last-child { border-left-color: transparent; }
+
+        .timeline-item::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: var(--green-light);
+            border-radius: 50%;
+            position: absolute;
+            left: -6.5px;
+            top: 16px;
+        }
+
+        .timeline-item:first-child::before {
+            background: var(--gold);
+            width: 14px;
+            height: 14px;
+            left: -8.5px;
+        }
+
+        .timeline-content .status { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .timeline-content .loc { color: var(--text-gray); font-size: 13px; }
+        .timeline-content .time { font-size: 11px; color: #aaa; margin-top: 3px; }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .detail-item {
+            background: #f8f9fa;
+            padding: 10px 14px;
+            border-radius: 8px;
+        }
+
+        .detail-item .lbl {
+            font-size: 10px;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-item .val { font-weight: 600; font-size: 14px; margin-top: 2px; }
+
+        .loading { text-align: center; padding: 30px; color: var(--text-gray); }
+        .empty-state { text-align: center; padding: 30px; color: #aaa; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .portal-nav { padding: 0 16px; }
+            .portal-nav-menu { gap: 12px; }
+            .portal-nav-menu li { font-size: 12px; }
+        }
+
+        @media (max-width: 768px) {
+            /* Hide desktop menu, show burger */
+            .portal-nav-menu {
+                display: none;
+            }
+
+            .burger-btn {
+                display: flex;
+            }
+
+            .mobile-menu-overlay {
+                display: block;
+            }
+
+            .mobile-backdrop {
+                display: block;
+            }
+
+            .portal-nav-user .btn-logout {
+                display: none;
+            }
+
+            .portal-nav-user span {
+                font-size: 12px;
+            }
+
+            .stats-row { grid-template-columns: 1fr 1fr; }
+            .detail-grid { grid-template-columns: 1fr; }
+            .login-box { padding: 32px 20px; }
+            .welcome-card h1 { font-size: 20px; }
+            .portal-content { padding: 16px 12px; }
+            .modal-box { padding: 20px 16px; }
+            .table-card { padding: 10px; }
+            table th, table td { padding: 6px 8px; font-size: 12px; }
+            table { min-width: 480px; }
+            .truck-track { height: 80px; }
+            .truck-cab { width: 28px; height: 22px; }
+            .truck-container { width: 44px; height: 24px; }
+            .truck-status-label { font-size: 10px; padding: 2px 10px; top: 4px; right: 8px; }
+            @keyframes truckDrive {
+                0% { left: -60px; }
+                85% { left: calc(100% - 90px); }
+                100% { left: calc(100% - 90px); }
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .stat-card { padding: 12px; }
+            .stat-card .num { font-size: 24px; }
+            .login-box { padding: 24px 16px; }
+            .login-logo span { font-size: 18px; }
+            .login-box h2 { font-size: 22px; }
+            .section-header h2 { font-size: 18px; }
+            .welcome-card { padding: 16px; }
+            .welcome-card h1 { font-size: 18px; }
+            .filter-bar input, .filter-bar select { min-width: 100%; }
+            .mobile-menu-overlay { width: 100%; max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background overlay -->
+<div class="bg-overlay"></div>
+
+<!-- LOGIN PAGE -->
+<div class="login-container" id="loginPage">
+    <div class="login-box">
+        <div class="login-logo">
+            <img src="./images/logo.png" alt="Logo">
+            <span>ISMEIL SOLUTION</span>
+        </div>
+        <h2>Client Portal</h2>
+        <p class="subtitle">Track your shipments in real-time</p>
+
+        <div class="login-info">
+            <strong>
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                Simple Login
+            </strong>
+            Enter your <strong>Client ID</strong> to access your dashboard. No password needed.
+        </div>
+
+        <div class="login-error" id="loginError"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Client ID</label>
+                <input type="text" id="loginClientId" placeholder="e.g. CL-ABCD12" required autocomplete="off">
+            </div>
+            <button type="submit" class="btn-login">Access My Portal</button>
+        </form>
+
+        <p class="login-footer">Contact your administrator if you don't have your Client ID.</p>
+    </div>
+</div>
+
+<!-- PORTAL -->
+<div class="portal" id="portal">
+    <nav class="portal-nav">
+        <div class="brand">
+            <img src="./images/logo.png" alt="Logo">
+            <span>ISMEIL SOLUTION</span>
+        </div>
+
+        <!-- Desktop Menu -->
+        <ul class="portal-nav-menu" id="desktopMenu">
+            <li class="active" data-section="dashboard">
+                <svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                Dashboard
+            </li>
+            <li data-section="collections">
+                <svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M2 11h20"/></svg>
+                My Collections
+            </li>
+            <li data-section="notifications">
+                <svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                Notifications
+            </li>
+            <li data-section="profile">
+                <svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M5 20v-2a7 7 0 0114 0v2"/></svg>
+                Profile
+            </li>
+        </ul>
+
+        <div class="portal-nav-user">
+            <span id="userName">Client</span>
+            <button class="btn-logout" onclick="logout()">Logout</button>
+            <!-- Burger Button -->
+            <button class="burger-btn" id="burgerBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Backdrop -->
+    <div class="mobile-backdrop" id="mobileBackdrop"></div>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenu">
+        <ul class="mobile-nav-menu">
+            <li class="active" data-section="dashboard" onclick="closeMobileMenu()">
+                <svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                Dashboard
+            </li>
+            <li data-section="collections" onclick="closeMobileMenu()">
+                <svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M2 11h20"/></svg>
+                My Collections
+            </li>
+            <li data-section="notifications" onclick="closeMobileMenu()">
+                <svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                Notifications
+            </li>
+            <li data-section="profile" onclick="closeMobileMenu()">
+                <svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M5 20v-2a7 7 0 0114 0v2"/></svg>
+                Profile
+            </li>
+        </ul>
+        <div class="mobile-user-section">
+            <div>Logged in as</div>
+            <div class="name" id="mobileUserName">Client</div>
+            <button class="mobile-logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="portal-content">
+        <!-- Dashboard -->
+        <div class="section active" id="section-dashboard">
+            <div class="welcome-card">
+                <h1>Welcome, <span id="dashboardName">Client</span>!</h1>
+                <p style="color:var(--text-gray);margin-top:2px;" id="dashboardCompany"></p>
+                <span class="client-id-tag" id="dashboardClientId">
+                    <svg class="icon-svg-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    Client ID: --
+                </span>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-card"><div class="num" id="statActive">0</div><div class="lbl">Active</div></div>
+                <div class="stat-card"><div class="num" id="statCompleted">0</div><div class="lbl">Delivered</div></div>
+                <div class="stat-card"><div class="num" id="statTotal">0</div><div class="lbl">Total</div></div>
+                <div class="stat-card"><div class="num" id="statNotifications">0</div><div class="lbl">Updates</div></div>
+            </div>
+
+            <div class="table-card">
+                <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;margin-bottom:12px;color:var(--green);">Recent Collections</h3>
+                <div id="recentCollections"><div class="loading">Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- Collections -->
+        <div class="section" id="section-collections">
+            <div class="section-header"><h2>My Collections</h2></div>
+            <div class="filter-bar">
+                <input type="text" placeholder="Search..." id="collectionSearch" oninput="filterClientCollections()">
+                <select id="collectionStatusFilter" onchange="filterClientCollections()">
+                    <option value="">All Status</option>
+                    <option value="at_station">At Station</option>
+                    <option value="in_transit">In Transit</option>
+                    <option value="at_destination_station">At Destination</option>
+                    <option value="out_for_delivery">Out for Delivery</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="delayed">Delayed</option>
+                </select>
+            </div>
+            <div class="table-card">
+                <table>
+                    <thead><tr><th>Tracking</th><th>Collection</th><th>Origin</th><th>Destination</th><th>Status</th><th>Items</th><th>Action</th></tr></thead>
+                    <tbody id="collectionsTableBody"><tr><td colspan="7" class="loading">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="section" id="section-notifications">
+            <div class="section-header">
+                <h2>Notifications</h2>
+                <button class="btn-sm btn-success" onclick="markAllRead()">Mark All Read</button>
+            </div>
+            <div id="notificationsList"><div class="loading">Loading...</div></div>
+        </div>
+
+        <!-- Profile -->
+        <div class="section" id="section-profile">
+            <div class="section-header"><h2>My Profile</h2></div>
+            <div class="table-card" id="profileDetails"><div class="loading">Loading...</div></div>
+        </div>
+    </div>
+</div>
+
+<!-- Collection Detail Modal -->
+<div class="modal-overlay" id="collectionDetailModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Collection Details</h3>
+            <button class="modal-close" onclick="closeModal('collectionDetailModal')">&times;</button>
+        </div>
+        <div id="collectionDetailContent"><div class="loading">Loading...</div></div>
+    </div>
+</div>
+
+<script>
+const API_URL = 'http://localhost:5000/api';
+let socket = null, currentUser = null, currentClient = null, token = null;
+let clientCollections = [], clientNotifications = [];
+
+// ===== MOBILE MENU =====
+const burgerBtn = document.getElementById('burgerBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+const mobileBackdrop = document.getElementById('mobileBackdrop');
+
+function toggleMobileMenu() {
+    const isOpen = mobileMenu.classList.contains('open');
+    if (isOpen) {
+        closeMobileMenu();
+    } else {
+        openMobileMenu();
+    }
+}
+
+function openMobileMenu() {
+    mobileMenu.classList.add('open');
+    mobileBackdrop.classList.add('open');
+    burgerBtn.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeMobileMenu() {
+    mobileMenu.classList.remove('open');
+    mobileBackdrop.classList.remove('open');
+    burgerBtn.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+burgerBtn.addEventListener('click', toggleMobileMenu);
+mobileBackdrop.addEventListener('click', closeMobileMenu);
+
+// Close mobile menu on escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMobileMenu();
+});
+
+// Sync mobile menu with desktop nav clicks
+document.querySelectorAll('.portal-nav-menu li[data-section], .mobile-nav-menu li[data-section]').forEach(item => {
+    item.addEventListener('click', function() {
+        const section = this.dataset.section;
+        document.querySelectorAll('.portal-nav-menu li, .mobile-nav-menu li').forEach(l => l.classList.remove('active'));
+        document.querySelectorAll(`.portal-nav-menu li[data-section="${section}"], .mobile-nav-menu li[data-section="${section}"]`).forEach(l => l.classList.add('active'));
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(`section-${section}`).classList.add('active');
+        if (section === 'notifications') loadClientNotifications();
+        if (section === 'profile') loadProfileDetails();
+    });
+});
+
+// Toast
+function showToast(msg, type='success') {
+    const t = document.createElement('div');
+    t.style.cssText = `position:fixed;top:20px;right:20px;z-index:9999;padding:14px 24px;border-radius:8px;color:#fff;font-weight:600;font-size:13px;animation:slideIn .4s ease;background:${type==='error'?'#e74c3c':type==='info'?'#3498db':'#27ae60'};max-width:90%;box-shadow:0 4px 16px rgba(0,0,0,0.15);`;
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .4s'; setTimeout(()=>t.remove(),400); }, 3000);
+}
+
+// Login
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const clientId = document.getElementById('loginClientId').value.trim();
+    const errEl = document.getElementById('loginError');
+    errEl.style.display = 'none';
+
+    try {
+        const res = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ email: clientId })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            token = data.accessToken;
+            currentUser = data.user;
+            if (currentUser.role !== 'client') {
+                errEl.textContent = 'This portal is for clients only.';
+                errEl.style.display = 'block';
+                return;
+            }
+            localStorage.setItem('clientToken', token);
+            localStorage.setItem('clientUser', JSON.stringify(currentUser));
+            await loadClientProfile();
+            initPortal();
+            showToast('Welcome!');
+        } else {
+            errEl.textContent = data.error || 'Invalid Client ID. Please try again.';
+            errEl.style.display = 'block';
+        }
+    } catch (err) {
+        errEl.textContent = 'Network error. Please try again.';
+        errEl.style.display = 'block';
+    }
+});
+
+function logout() {
+    closeMobileMenu();
+    localStorage.removeItem('clientToken');
+    localStorage.removeItem('clientUser');
+    document.getElementById('portal').style.display = 'none';
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('loginClientId').value = '';
+    token = null; currentUser = null; currentClient = null;
+    if (socket) { socket.disconnect(); socket = null; }
+}
+
+async function loadClientProfile() {
+    try {
+        const res = await fetch(`${API_URL}/clients`, { headers: {'Authorization':`Bearer ${token}`} });
+        const clients = await res.json();
+        currentClient = clients.find(c => c.userId && (c.userId._id === currentUser.id || c.userId === currentUser.id));
+        if (!currentClient && currentUser.clientId) {
+            currentClient = clients.find(c => c.clientId === currentUser.clientId);
+        }
+        if (!currentClient) {
+            currentClient = { clientId: currentUser.clientId || 'N/A', companyName: 'Client', contactPerson: currentUser.fullName };
+        }
+    } catch(e) {}
+}
+
+function initPortal() {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('portal').style.display = 'block';
+    document.querySelector('.bg-overlay').style.display = 'none';
+
+    const name = currentClient?.contactPerson || currentUser?.fullName || 'Client';
+    document.getElementById('userName').textContent = name;
+    document.getElementById('mobileUserName').textContent = name;
+    document.getElementById('dashboardName').textContent = name;
+    document.getElementById('dashboardCompany').textContent = currentClient?.companyName || '';
+    document.getElementById('dashboardClientId').innerHTML = `
+        <svg class="icon-svg-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Client ID: ${currentClient?.clientId || 'N/A'}
+    `;
+
+    initSocket();
+    loadDashboard();
+    loadClientCollections();
+    loadClientNotifications();
+    loadProfileDetails();
+}
+
+function initSocket() {
+    if (socket) return;
+    socket = io('http://localhost:5000', { auth: { token } });
+    socket.on('connect', () => { if (currentClient?._id) socket.emit('join-client', currentClient._id); });
+    socket.on('new-notification', () => { loadClientNotifications(); showToast('New update!', 'info'); });
+    socket.on('collection-update', () => { loadDashboard(); loadClientCollections(); });
+}
+
+async function apiRequest(endpoint, options = {}) {
+    const config = { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, ...options };
+    if (options.body) config.body = JSON.stringify(options.body);
+    const res = await fetch(`${API_URL}${endpoint}`, config);
+    const data = await res.json();
+    if (!res.ok) { if (res.status === 401) logout(); throw new Error(data.error || 'Request failed'); }
+    return data;
+}
+
+function formatStatus(s) { const m = { at_station:'At Station', in_transit:'In Transit', at_destination_station:'At Destination', out_for_delivery:'Out for Delivery', delivered:'Delivered', delayed:'Delayed', cancelled:'Cancelled' }; return m[s] || s; }
+function formatDate(d) { if(!d) return 'N/A'; try { return new Date(d).toLocaleDateString(); } catch { return 'N/A'; } }
+function formatDateTime(d) { if(!d) return 'N/A'; try { return new Date(d).toLocaleString(); } catch { return 'N/A'; } }
+
+async function loadDashboard() {
+    const myCols = clientCollections;
+    document.getElementById('statActive').textContent = myCols.filter(c => !['delivered','cancelled'].includes(c.status)).length;
+    document.getElementById('statCompleted').textContent = myCols.filter(c => c.status === 'delivered').length;
+    document.getElementById('statTotal').textContent = myCols.length;
+    document.getElementById('statNotifications').textContent = clientNotifications.filter(n => !n.readStatus).length;
+
+    document.getElementById('recentCollections').innerHTML = myCols.slice(0,5).map(c => `
+        <div style="padding:10px 0;border-bottom:1px solid #f0f0f0;cursor:pointer;" onclick="viewCollectionDetail('${c.trackingNumber}')">
+            <strong>${c.collectionName}</strong>
+            <span style="float:right;"><span class="status-badge status-${c.status}">${formatStatus(c.status)}</span></span>
+            <br><small style="color:#999;">${c.trackingNumber} | ${formatDate(c.departureDate)}</small>
+        </div>`).join('') || '<div class="empty-state">No collections yet</div>';
+}
+
+async function loadClientCollections() {
+    try {
+        const cols = await apiRequest('/collections');
+        clientCollections = currentClient ? cols.filter(c => c.clientIds?.some(cl => (cl._id||cl) === currentClient._id)) : [];
+        renderClientCollections(clientCollections);
+        loadDashboard();
+    } catch(e) {}
+}
+
+function renderClientCollections(cols) {
+    document.getElementById('collectionsTableBody').innerHTML = (!cols||cols.length===0) ?
+        '<tr><td colspan="7" class="empty-state">No collections found</td></tr>' :
+        cols.map(c => `<tr><td><strong>${c.trackingNumber}</strong></td><td>${c.collectionName}</td><td>${c.origin}</td><td>${c.destination}</td><td><span class="status-badge status-${c.status}">${formatStatus(c.status)}</span></td><td>${c.itemCount||0}</td><td><button class="btn-sm btn-success" onclick="viewCollectionDetail('${c.trackingNumber}')">Track</button></td></tr>`).join('');
+}
+
+function filterClientCollections() {
+    const s = document.getElementById('collectionSearch').value.toLowerCase();
+    const st = document.getElementById('collectionStatusFilter').value;
+    let f = [...clientCollections];
+    if(s) f = f.filter(c => c.trackingNumber.toLowerCase().includes(s)||c.collectionName.toLowerCase().includes(s)||c.origin.toLowerCase().includes(s)||c.destination.toLowerCase().includes(s));
+    if(st) f = f.filter(c => c.status === st);
+    renderClientCollections(f);
+}
+
+async function viewCollectionDetail(trackingNumber) {
+    try {
+        const data = await apiRequest(`/collections/${trackingNumber}`);
+        const c = data.collection;
+        let trackingHtml = '<div class="empty-state">No tracking updates yet</div>';
+        let currentStatus = c.status;
+        
+        try {
+            const tracking = await apiRequest(`/tracking/${c._id}`);
+            if (tracking?.length) {
+                const sorted = [...tracking].reverse();
+                trackingHtml = sorted.map(t => `
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="status">${formatStatus(t.status)}</div>
+                            <div class="loc">${t.location}</div>
+                            ${t.note ? `<div class="loc" style="color:#888;">${t.note}</div>` : ''}
+                            <div class="time">${formatDateTime(t.timestamp)}</div>
+                        </div>
+                    </div>`).join('');
+                if (tracking.length > 0) {
+                    currentStatus = tracking[tracking.length - 1].status;
+                }
+            }
+        } catch(e) {}
+
+        const isActive = !['delivered', 'cancelled'].includes(currentStatus);
+        const truckHtml = isActive ? `
+            <div class="truck-track">
+                <div class="road-line"></div>
+                <div class="truck">
+                    <div class="truck-body">
+                        <div class="truck-cab"><div class="window"></div></div>
+                        <div class="truck-container">
+                            <div class="stripe"></div>
+                            <div class="stripe"></div>
+                        </div>
+                    </div>
+                    <div class="truck-shadow"></div>
+                </div>
+                <div class="truck-status-label">${formatStatus(currentStatus)}</div>
+            </div>
+        ` : `
+            <div style="background:#f0f4f8;padding:20px;border-radius:10px;text-align:center;margin-bottom:16px;border:1px solid #ddd;">
+                <span style="font-size:24px;display:block;margin-bottom:4px;">${currentStatus === 'delivered' ? '✅' : '❌'}</span>
+                <span style="font-weight:600;color:var(--text-gray);">${currentStatus === 'delivered' ? 'Delivered' : 'Cancelled'} — No longer in transit</span>
+            </div>
+        `;
+
+        document.getElementById('collectionDetailContent').innerHTML = `
+            ${truckHtml}
+            <div class="detail-grid">
+                <div class="detail-item"><div class="lbl">Collection</div><div class="val">${c.collectionName}</div></div>
+                <div class="detail-item"><div class="lbl">Tracking</div><div class="val" style="color:var(--green);">${c.trackingNumber}</div></div>
+                <div class="detail-item"><div class="lbl">Status</div><div class="val"><span class="status-badge status-${c.status}">${formatStatus(c.status)}</span></div></div>
+                <div class="detail-item"><div class="lbl">Transport</div><div class="val">${c.transportMethod?.toUpperCase()||'N/A'}</div></div>
+                <div class="detail-item"><div class="lbl">Origin</div><div class="val">${c.origin}</div></div>
+                <div class="detail-item"><div class="lbl">Destination</div><div class="val">${c.destination}</div></div>
+                <div class="detail-item"><div class="lbl">Departure</div><div class="val">${formatDateTime(c.departureDate)}</div></div>
+                <div class="detail-item"><div class="lbl">Est. Arrival</div><div class="val">${formatDateTime(c.estimatedArrival)}</div></div>
+            </div>
+            <h3 style="font-family:'Barlow Condensed',sans-serif;color:var(--green);margin:12px 0;">Tracking History</h3>
+            <div class="timeline">${trackingHtml}</div>`;
+        openModal('collectionDetailModal');
+    } catch(e) { showToast('Error loading details', 'error'); }
+}
+
+async function loadClientNotifications() {
+    try {
+        if (!currentClient?.clientId) return;
+        clientNotifications = (await apiRequest(`/notifications/client/${currentClient.clientId}`)).sort((a,b) => new Date(b.createdAt)-new Date(a.createdAt));
+        renderClientNotifications(clientNotifications);
+        loadDashboard();
+    } catch(e) {}
+}
+
+function renderClientNotifications(notifs) {
+    document.getElementById('notificationsList').innerHTML = (!notifs||notifs.length===0) ?
+        '<div class="empty-state">No notifications yet</div>' :
+        notifs.map(n => `<div class="notif-card ${n.readStatus?'read':''}"><div style="flex:1;min-width:0;"><div class="title">${n.title}</div><div class="msg">${n.message}</div><div class="time">${formatDateTime(n.createdAt)}</div></div>${!n.readStatus?`<button class="btn-sm btn-success" onclick="markAsRead('${n._id}')">Read</button>`:''}</div>`).join('');
+}
+
+async function markAsRead(id) { try { await apiRequest(`/notifications/read/${id}`, { method: 'PUT' }); loadClientNotifications(); } catch(e) {} }
+async function markAllRead() {
+    const unread = clientNotifications.filter(n => !n.readStatus);
+    if (!unread.length) { showToast('No unread notifications', 'info'); return; }
+    for (const n of unread) { try { await apiRequest(`/notifications/read/${n._id}`, { method: 'PUT' }); } catch(e) {} }
+    loadClientNotifications(); showToast('All marked as read', 'success');
+}
+
+async function loadProfileDetails() {
+    document.getElementById('profileDetails').innerHTML = currentClient ? `
+        <div class="detail-grid">
+            <div class="detail-item"><div class="lbl">Client ID</div><div class="val" style="font-size:18px;color:var(--green);">${currentClient.clientId||'N/A'}</div></div>
+            <div class="detail-item"><div class="lbl">Company</div><div class="val">${currentClient.companyName||'N/A'}</div></div>
+            <div class="detail-item"><div class="lbl">Contact</div><div class="val">${currentClient.contactPerson||currentUser?.fullName||'N/A'}</div></div>
+            <div class="detail-item"><div class="lbl">Phone</div><div class="val">${currentClient.phoneNumber||'N/A'}</div></div>
+            <div class="detail-item"><div class="lbl">Email</div><div class="val">${currentUser?.email||'N/A'}</div></div>
+            <div class="detail-item"><div class="lbl">Country</div><div class="val">${currentClient.country||'N/A'}</div></div>
+            <div class="detail-item"><div class="lbl">Active Shipments</div><div class="val">${currentClient.activeShipments||0}</div></div>
+            <div class="detail-item"><div class="lbl">Completed</div><div class="val">${currentClient.completedShipments||0}</div></div>
+        </div>` : '<div class="empty-state">Profile not found</div>';
+}
+
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+document.querySelectorAll('.modal-overlay').forEach(m => { m.addEventListener('click', (e) => { if (e.target === m) closeModal(m.id); }); });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const savedToken = localStorage.getItem('clientToken');
+    const savedUser = localStorage.getItem('clientUser');
+    if (savedToken && savedUser) {
+        token = savedToken;
+        currentUser = JSON.parse(savedUser);
+        loadClientProfile().then(() => initPortal());
+    }
+});
+</script>
+</body>
+</html>
