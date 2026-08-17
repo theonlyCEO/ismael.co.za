@@ -6,6 +6,19 @@
       "use": "@vercel/static"
     },
     {
+      "src": "sitemap.xml",
+      "use": "@vercel/static"
+    },
+        {
+      "src": "sitemap.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "robots.txt",
+      "use": "@vercel/static"
+    },
+    
+    {
       "src": "images/**",
       "use": "@vercel/static"
     },
@@ -42,6 +55,18 @@
     {
       "src": "/client.html",
       "dest": "/client.html"
+    },
+    {
+      "src": "/sitemap.xml",
+      "dest": "/sitemap.xml"
+    },
+     {
+      "src": "/sitemap.html",
+      "dest": "/sitemap.html"
+    },
+    {
+      "src": "/robots.txt",
+      "dest": "/robots.txt"
     },
     {
       "src": "/favicon.png",
