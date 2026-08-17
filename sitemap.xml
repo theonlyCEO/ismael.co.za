@@ -4,7 +4,7 @@
     
     <!-- Homepage -->
     <url>
-        <loc>https://ismeilsolution.com/</loc>
+        <loc>https://ismeilsolutions.com/</loc>
         <lastmod>2026-08-17</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
@@ -12,15 +12,49 @@
     
     <!-- Solutions Page -->
     <url>
-        <loc>https://ismeilsolution.com/solution.html</loc>
+        <loc>https://ismeilsolutions.com/solution.html</loc>
         <lastmod>2026-08-17</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
     </url>
-    
+    <?xml version="1.0" encoding="UTF-8"?>
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>https://ismeilsolutions.com/</loc>
+        <lastmod>2026-08-17</lastmod>
+    </url>
+
+    <url>
+        <loc>https://ismeilsolutions.com/solution.html</loc>
+        <lastmod>2026-08-17</lastmod>
+    </url>
+
+    <url>
+        <loc>https://ismeilsolutions.com/industries.html</loc>
+        <lastmod>2026-08-17</lastmod>
+    </url>
+
+    <url>
+        <loc>https://ismeilsolutions.com/about.html</loc>
+        <lastmod>2026-08-17</lastmod>
+    </url>
+
+    <url>
+        <loc>https://ismeilsolutions.com/contact.html</loc>
+        <lastmod>2026-08-17</lastmod>
+    </url>
+
+    <url>
+        <loc>https://ismeilsolutions.com/client.html</loc>
+        <lastmod>2026-08-17</lastmod>
+    </url>
+
+</urlset>
     <!-- Industries Page -->
     <url>
-        <loc>https://ismeilsolution.com/industries.html</loc>
+        <loc>https://ismeilsolutions.com/industries.html</loc>
         <lastmod>2026-08-17</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
@@ -28,7 +62,7 @@
     
     <!-- About Us Page -->
     <url>
-        <loc>https://ismeilsolution.com/about.html</loc>
+        <loc>https://ismeilsolutions.com/about.html</loc>
         <lastmod>2026-08-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
@@ -36,7 +70,7 @@
     
     <!-- Contact Page -->
     <url>
-        <loc>https://ismeilsolution.com/contact.html</loc>
+        <loc>https://ismeilsolutions.com/contact.html</loc>
         <lastmod>2026-08-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
@@ -44,7 +78,7 @@
     
     <!-- Client Portal -->
     <url>
-        <loc>https://ismeilsolution.com/client.html</loc>
+        <loc>https://ismeilsolutions.com/client.html</loc>
         <lastmod>2026-08-17</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
