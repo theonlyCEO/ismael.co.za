@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Map | Ismeil Solution</title>
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #1c2533;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px 48px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: #0047AB;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 20px;
+            position: relative;
+        }
+        
+        .logo-icon small {
+            position: absolute;
+            bottom: -10px;
+            font-size: 7px;
+            letter-spacing: 0.5px;
+            color: #5e6f8d;
+            background: #fff;
+            padding: 0 4px;
+        }
+        
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #0047AB;
+            line-height: 1.1;
+        }
+        
+        .logo-text span {
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: #7b8aa3;
+            letter-spacing: 2px;
+            display: block;
+            text-transform: uppercase;
+        }
+        
+        h1 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #0d1f3c;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-bottom: 32px;
+        }
+        
+        .sitemap-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        
+        .sitemap-section {
+            border: 1px solid #e7eaf0;
+            border-radius: 12px;
+            padding: 20px 24px;
+            transition: 0.2s;
+        }
+        
+        .sitemap-section:hover {
+            border-color: #0047AB;
+            box-shadow: 0 4px 12px rgba(0,71,171,0.06);
+        }
+        
+        .sitemap-section h2 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0d1f3c;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f5c518;
+        }
+        
+        .sitemap-section ul {
+            list-style: none;
+        }
+        
+        .sitemap-section ul li {
+            padding: 6px 0;
+            border-bottom: 1px solid #f0f2f5;
+        }
+        
+        .sitemap-section ul li:last-child {
+            border-bottom: none;
+        }
+        
+        .sitemap-section ul li a {
+            color: #0047AB;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        
+        .sitemap-section ul li a:hover {
+            color: #003380;
+            padding-left: 6px;
+        }
+        
+        .sitemap-section ul li a i {
+            color: #f5c518;
+            font-size: 12px;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #1a4d3a;
+            font-size: 0.55rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 6px;
+            text-transform: uppercase;
+        }
+        
+        .footer {
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 1px solid #e7eaf0;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #a0b3cc;
+        }
+        
+        @media (max-width: 600px) {
+            .container { padding: 24px 16px; }
+            .sitemap-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="logo">
+            <div class="logo-icon">iS<small>ISMEIL</small></div>
+            <div class="logo-text">ISMEIL SOLUTION<span>LOGISTICS</span></div>
+        </a>
+        
+        <h1>Site Map</h1>
+        <p class="subtitle">Navigate through all the pages of Ismeil Solution — your logistics partner without limits.</p>
+        
+        <div class="sitemap-grid">
+            <!-- Main Pages -->
+            <div class="sitemap-section">
+                <h2>🏠 Main Pages</h2>
+                <ul>
+                    <li><a href="/"><i class="fas fa-chevron-right"></i> Home <span class="badge">Main</span></a></li>
+                    <li><a href="/solution.html"><i class="fas fa-chevron-right"></i> Solutions</a></li>
+                    <li><a href="/industries.html"><i class="fas fa-chevron-right"></i> Industries</a></li>
+                    <li><a href="/about.html"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                    <li><a href="/contact.html"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
+                </ul>
+            </div>
+            
+            <!-- Services -->
+            <div class="sitemap-section">
+                <h2>🚚 Services</h2>
+                <ul>
+                    <li><a href="/solution.html#freight"><i class="fas fa-chevron-right"></i> Freight Forwarding</a></li>
+                    <li><a href="/solution.html#warehousing"><i class="fas fa-chevron-right"></i> Warehousing</a></li>
+                    <li><a href="/solution.html#customs"><i class="fas fa-chevron-right"></i> Customs Brokerage</a></li>
+                    <li><a href="/solution.html#distribution"><i class="fas fa-chevron-right"></i> Distribution Services</a></li>
+                    <li><a href="/solution.html#supply"><i class="fas fa-chevron-right"></i> Supply Chain Management</a></li>
+                    <li><a href="/solution.html#consulting"><i class="fas fa-chevron-right"></i> Logistics Consulting</a></li>
+                </ul>
+            </div>
+            
+            <!-- Industries -->
+            <div class="sitemap-section">
+                <h2>🏗️ Industries</h2>
+                <ul>
+                    <li><a href="/industries.html#mining"><i class="fas fa-chevron-right"></i> Mining Industry</a></li>
+                    <li><a href="/industries.html#automotive"><i class="fas fa-chevron-right"></i> Automotive Industry</a></li>
+                    <li><a href="/industries.html#retail"><i class="fas fa-chevron-right"></i> Consumer Retail</a></li>
+                </ul>
+            </div>
+            
+            <!-- Client Portal -->
+            <div class="sitemap-section">
+                <h2>👤 Client Portal</h2>
+                <ul>
+                    <li><a href="/client.html"><i class="fas fa-chevron-right"></i> Client Login</a></li>
+                    <li><a href="/client.html#dashboard"><i class="fas fa-chevron-right"></i> Dashboard</a></li>
+                    <li><a href="/client.html#collections"><i class="fas fa-chevron-right"></i> My Collections</a></li>
+                    <li><a href="/client.html#notifications"><i class="fas fa-chevron-right"></i> Notifications</a></li>
+                    <li><a href="/client.html#profile"><i class="fas fa-chevron-right"></i> Profile</a></li>
+                </ul>
+            </div>
+            
+            <!-- Quick Links -->
+            <div class="sitemap-section">
+                <h2>⚡ Quick Links</h2>
+                <ul>
+                    <li><a href="/contact.html"><i class="fas fa-chevron-right"></i> Get a Quote</a></li>
+                    <li><a href="/client.html"><i class="fas fa-chevron-right"></i> Track Shipment</a></li>
+                    <li><a href="/contact.html"><i class="fas fa-chevron-right"></i> Book Shipping</a></li>
+                </ul>
+            </div>
+            
+            <!-- Company Info -->
+            <div class="sitemap-section">
+                <h2>📋 Company Info</h2>
+                <ul>
+                    <li><a href="/about.html"><i class="fas fa-chevron-right"></i> Our Story</a></li>
+                    <li><a href="/about.html#values"><i class="fas fa-chevron-right"></i> Our Values</a></li>
+                    <li><a href="/contact.html"><i class="fas fa-chevron-right"></i> Contact Details</a></li>
+                    <li><a href="/contact.html"><i class="fas fa-chevron-right"></i> Get Directions</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer">
+            &copy; 2026 ISMEIL SOLUTION. All rights reserved. | <a href="/sitemap.xml" style="color:#0047AB;">XML Sitemap</a>
+        </div>
+    </div>
+</body>
+</html>
