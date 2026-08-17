@@ -1,6 +1,11 @@
-
 User-agent: *
 Allow: /
-Disallow: /client.html?*
+
+# Disallow only image folders
 Disallow: /images/
-Sitemap: https://www.ismeilsolution.com/sitemap.xml
+
+# Allow all HTML pages
+Allow: /*.html$
+
+# Sitemap location
+Sitemap: https://ismeilsolution.com/sitemap.xml

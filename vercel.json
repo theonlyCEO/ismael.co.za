@@ -6,18 +6,13 @@
       "use": "@vercel/static"
     },
     {
-      "src": "sitemap.xml",
-      "use": "@vercel/static"
-    },
-        {
-      "src": "sitemap.html",
+      "src": "*.xml",
       "use": "@vercel/static"
     },
     {
-      "src": "robots.txt",
+      "src": "*.txt",
       "use": "@vercel/static"
     },
-    
     {
       "src": "images/**",
       "use": "@vercel/static"
@@ -60,7 +55,7 @@
       "src": "/sitemap.xml",
       "dest": "/sitemap.xml"
     },
-     {
+    {
       "src": "/sitemap.html",
       "dest": "/sitemap.html"
     },
