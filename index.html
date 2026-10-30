@@ -837,6 +837,158 @@
       .routes-box { min-width: auto; }
       .mobile-menu { width: 100%; max-width: 100%; }
     }
+
+    /* ===== VIDEO SECTION ===== */
+.video-section {
+  padding: 60px 0 40px;
+  background: #f8fafc;
+  border-top: 1px solid #e9edf2;
+}
+
+.video-section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.video-section-header h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #0d1f3c;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.video-section-header p {
+  color: #6b7280;
+  font-size: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.video-card {
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #e7eaf0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.video-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  background: #0d1f3c;
+  overflow: hidden;
+}
+
+.video-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #0d1f3c;
+}
+
+.video-info {
+  padding: 18px 20px 22px;
+}
+
+.video-info h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0d1f3c;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.video-info p {
+  font-size: 0.85rem;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .video-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .video-section {
+    padding: 40px 0 30px;
+  }
+
+  .video-section-header h2 {
+    font-size: 1.8rem;
+  }
+
+  .video-section-header p {
+    font-size: 0.9rem;
+    padding: 0 12px;
+  }
+
+  .video-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .video-info {
+    padding: 14px 16px 18px;
+  }
+
+  .video-info h3 {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .video-section {
+    padding: 30px 0 20px;
+  }
+
+  .video-section-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .video-section-header p {
+    font-size: 0.85rem;
+  }
+
+  .video-grid {
+    gap: 14px;
+  }
+
+  .video-info h3 {
+    font-size: 0.95rem;
+  }
+
+  .video-info p {
+    font-size: 0.8rem;
+  }
+}
   </style>
 </head>
 <body>
@@ -999,6 +1151,77 @@
 
 
   </div>
+
+  <!-- ===== VIDEO SECTION ===== -->
+<section class="video-section">
+  <div class="container">
+    <div class="video-section-header">
+      <h2>See Us In Action</h2>
+      <p>Watch how ISMEIL SOLUTION moves your business forward — from collection to delivery.</p>
+    </div>
+
+    <div class="video-grid">
+      <!-- Video 1 -->
+      <div class="video-card">
+        <div class="video-wrapper">
+          <video 
+            class="video-player" 
+            controls 
+            playsinline 
+            preload="metadata"
+            poster="images/im1.png">
+            <source src="videos/video1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="video-info">
+          <h3>Our Logistics Operations</h3>
+          <p>End-to-end freight handling and warehousing at scale.</p>
+        </div>
+      </div>
+
+      <!-- Video 2 -->
+      <div class="video-card">
+        <div class="video-wrapper">
+          <video 
+            class="video-player" 
+            controls 
+            playsinline 
+            preload="metadata"
+            poster="images/im2.png">
+            <source src="videos/video2.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="video-info">
+          <h3>Warehouse Tour</h3>
+          <p>Inside our secure, technology-driven storage facilities.</p>
+        </div>
+      </div>
+
+      <!-- Video 3 -->
+      <div class="video-card">
+        <div class="video-wrapper">
+          <video 
+            class="video-player" 
+            controls 
+            playsinline 
+            preload="metadata"
+            poster="images/im3.png">
+            <source src="videos/video3.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="video-info">
+          <h3>Customer Stories</h3>
+          <p>Hear how we help businesses grow across Africa.</p>
+        </div>
+      </div>
+
+      
+    </div>
+  </div>
+</section>
 
   <!-- Footer note -->
   <div style="text-align: center; font-size: 0.65rem; color: #a0b3cc; padding: 20px 0 30px; border-top: 1px solid #e9edf2; margin-top: 10px;">
