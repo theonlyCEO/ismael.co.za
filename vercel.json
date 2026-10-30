@@ -17,6 +17,8 @@
       "src": "images/**",
       "use": "@vercel/static"
     },
+     { "src": "videos/**",
+      "use": "@vercel/static" }, 
     {
       "src": "favicon.png",
       "use": "@vercel/static"
